@@ -1,6 +1,6 @@
 const PREFIX='desk-screen:'+self.registration.scope+':';
-const CACHE=PREFIX+'03';
-const URLS=['index.html','manifest.webmanifest','icon-180.png','icon-192.png','icon-512.png'].map(p=>new URL(p,self.registration.scope).href);
+const CACHE=PREFIX+'04';
+const URLS=['index.html','screen.html','manifest.webmanifest','icon-180.png','icon-192.png','icon-512.png'].map(p=>new URL(p,self.registration.scope).href);
 self.addEventListener('install',event=>event.waitUntil((async()=>{
  const cache=await caches.open(CACHE);
  await cache.addAll(URLS);
@@ -20,14 +20,14 @@ self.addEventListener('message',event=>{
 self.addEventListener('fetch',event=>{
  const url=new URL(event.request.url),scope=new URL(self.registration.scope);
  if(event.request.method!=='GET'||url.origin!==scope.origin||!url.pathname.startsWith(scope.pathname))return;
- const isHome=event.request.mode==='navigate'&&(url.pathname===scope.pathname||url.pathname===scope.pathname+'index.html');
+ const isHome=event.request.mode==='navigate'&&(url.pathname===scope.pathname||url.pathname===scope.pathname+'index.html'||url.pathname===scope.pathname+'screen.html');
  if(isHome){event.respondWith((async()=>{
-  const cache=await caches.open(CACHE),controller=new AbortController();
+  const cache=await caches.open(CACHE),homeURL=url.pathname.endsWith('/screen.html')?URLS[1]:URLS[0],controller=new AbortController();
   const timer=setTimeout(()=>controller.abort(),4000);
   try{const response=await fetch(event.request,{signal:controller.signal});
    if(!response.ok||response.redirected||!response.headers.get('content-type')?.includes('text/html'))throw new Error('unavailable');
-   await cache.put(URLS[0],response.clone());return response;
-  }catch(error){const offline=await cache.match(URLS[0]);if(offline)return offline;throw error;}
+   await cache.put(homeURL,response.clone());return response;
+  }catch(error){const offline=await cache.match(homeURL);if(offline)return offline;throw error;}
   finally{clearTimeout(timer);}
  })());return;}
  if(URLS.includes(url.href))event.respondWith((async()=>{
