@@ -177,13 +177,15 @@ body[data-mode=away] footer{visibility:visible}body[data-mode=away] footer .wall
 html,body,#app,header,footer,.wall-nav,dialog,button,a{touch-action:manipulation}
 #stage,#clock,#videoSeek,#videoSeekHandle{touch-action:none}
 .wall-nav{-webkit-user-select:none;user-select:none}
+
+html{height:100%;overflow:hidden;overscroll-behavior:none}body{position:fixed;inset:0;width:100%;height:100%;overflow:hidden;overscroll-behavior:none}#stage{overscroll-behavior:none;touch-action:none}
 </style>
 <link rel="manifest" href="./manifest.webmanifest">
 </head>
 <body data-mode="focus">
 <main id="app" class="controls-hidden">
  <div id="wall"><img id="wallImage" alt="" draggable="false" hidden><video id="wallVideo" muted loop playsinline preload="metadata" hidden></video></div><div id="shade"></div>
- <header><div class="app-heading"><div class="app-title"><h1>デスクスクリーン</h1><span class="operation-badge"><span class="operation-dot" aria-hidden="true"></span>操作モード</span></div><div class="version">DESK SCREEN / iPhone Web 12</div></div><div class="tools"><button class="orientation-toggle" id="displayModeToggle" aria-label="壁紙と退席を切り替える"><span id="focusMode" class="selected">壁紙</span><span id="relaxMode">退席</span></button><select id="awayReasonQuick" aria-label="退席理由" hidden><option value="work">現場作業中</option><option value="meeting">会議中</option><option value="break">休憩中</option><option value="custom">その他</option></select><button class="orientation-toggle" id="quickOrientation" aria-label="縦横を切り替える"><span id="quickPortrait">縦</span><span id="quickLandscape">横</span></button><button class="icon" id="full" aria-label="全画面表示">全画面</button><button class="icon awake-quick" id="awakeQuick" aria-pressed="false">消灯防止</button><button class="icon" id="wallPickerOpen" aria-label="壁紙一覧を開く">壁紙</button><button class="icon" id="settingsOpen" aria-label="設定を開く">設定</button></div><div id="videoSeekPanel" hidden><div class="video-seek-heading" id="videoSeekHandle" title="長押しして移動"><span>動画の再生位置</span><output id="videoSeekTime">0:00 / 0:00</output></div><input id="videoSeek" type="range" min="0" max="1" step="0.1" value="0" disabled aria-label="動画の再生位置"></div></header>
+ <header><div class="app-heading"><div class="app-title"><h1>デスクスクリーン</h1><span class="operation-badge"><span class="operation-dot" aria-hidden="true"></span>操作モード</span></div><div class="version">DESK SCREEN / iPhone Web 13</div></div><div class="tools"><button class="orientation-toggle" id="displayModeToggle" aria-label="壁紙と退席を切り替える"><span id="focusMode" class="selected">壁紙</span><span id="relaxMode">退席</span></button><select id="awayReasonQuick" aria-label="退席理由" hidden><option value="work">現場作業中</option><option value="meeting">会議中</option><option value="break">休憩中</option><option value="custom">その他</option></select><button class="orientation-toggle" id="quickOrientation" aria-label="縦横を切り替える"><span id="quickPortrait">縦</span><span id="quickLandscape">横</span></button><button class="icon" id="full" aria-label="全画面表示">全画面</button><button class="icon awake-quick" id="awakeQuick" aria-pressed="false">消灯防止</button><button class="icon" id="wallPickerOpen" aria-label="壁紙一覧を開く">壁紙</button><button class="icon" id="settingsOpen" aria-label="設定を開く">設定</button></div><div id="videoSeekPanel" hidden><div class="video-seek-heading" id="videoSeekHandle" title="長押しして移動"><span>動画の再生位置</span><output id="videoSeekTime">0:00 / 0:00</output></div><input id="videoSeek" type="range" min="0" max="1" step="0.1" value="0" disabled aria-label="動画の再生位置"></div></header>
  <section id="awayScreen" aria-label="退席表示"><div id="awayMessageWindow"><div id="awayMessage"></div></div><div id="awayContactBlock" hidden><div class="away-contact-label">緊急時の連絡先</div><div id="awayContact"></div></div></section><section id="stage" aria-label="時計表示エリア"><div id="clock" class="flip" aria-label="現在時刻"><div id="clockFace"></div><div class="clock-date" id="date"></div><div class="seconds" id="seconds"></div></div><div id="clockHint">時計をドラッグして移動 · 画像が切れる場合は背景をドラッグして位置調整</div></section>
  <footer><nav id="relax" aria-label="リラックス用サービス"><a href="https://music.amazon.co.jp/" target="_blank" rel="noopener noreferrer">Amazon Music ↗</a><a href="https://www.youtube.com/" target="_blank" rel="noopener noreferrer">YouTube ↗</a><a href="https://www.tiktok.com/" target="_blank" rel="noopener noreferrer">TikTok ↗</a></nav><div class="info"><div class="metrics"><button id="chargeModeToggle" class="orientation-toggle" aria-label="自動と手動を切り替える" hidden><span id="chargeAutoLabel">自動</span><span id="chargeManualLabel">手動</span></button><span id="chargeModeHint" hidden></span><div class="metric" id="lockMetric" hidden><span id="lockState" aria-live="polite"></span></div><div class="metric"><span class="label">バッテリー</span><span id="battery">—</span><span id="chargeBadge" hidden>⚡ 充電中</span></div><div class="metric" id="batteryTempMetric" hidden><span class="label">バッテリー温度</span><span id="batteryTemp"></span></div></div><div class="wall-nav"><button id="prev" aria-label="前の壁紙">‹</button><span id="wallName"><span id="wallNameText">壁紙</span></span><button id="next" aria-label="次の壁紙">›</button></div></div></footer>
  <div id="toast" role="status" aria-live="polite"></div>
@@ -434,7 +436,7 @@ $('stage').addEventListener('pointerdown',e=>{
  },500);
 });
 $('stage').addEventListener('pointermove',e=>{
- if(!gesture||gesture.id!==e.pointerId)return;scheduleControlsHide();const g=gesture;g.lastX=e.clientX;g.lastY=e.clientY;
+ if(!gesture||gesture.id!==e.pointerId)return;e.preventDefault();scheduleControlsHide();const g=gesture;g.lastX=e.clientX;g.lastY=e.clientY;
  if(g.mode==='pending'&&Math.hypot(e.clientX-g.startX,e.clientY-g.startY)>10){cancelWallTap();cancelHold(g);const dx=e.clientX-g.startX,dy=e.clientY-g.startY;g.mode=state.mode==='away'?'held':Math.abs(dy)>Math.abs(dx)*1.2?'brightness':'ignored';}
  if(g.mode==='ignored')return;
  if(g.mode==='brightness'){const delta=-(e.clientY-g.startY)*80/Math.max(120,$('stage').clientHeight*.6);const value=Math.round(Math.max(20,Math.min(100,g.brightnessStart+delta)));if(state.dim!==100-value){state.dim=100-value;$('dim').value=value;$('brightnessLabel').textContent=value+'%';$('shade').style.backgroundColor=`rgba(0,0,0,${state.dim/100})`;toast('壁紙の明るさ '+value+'%');}return;}
@@ -490,8 +492,8 @@ async function replaceFolderImages(files,allowEmpty=false){
 $('chooseFiles').onclick=()=>$('wallFiles').click();$('chooseImages').onclick=()=>$('images').click();$('chooseFolder').onclick=()=>$('folder').click();for(const id of ['images','folder','wallFiles'])$(id).onchange=async()=>{const files=Array.from($(id).files);$(id).value='';if(id==='folder')await replaceFolderImages(files);else await addImages(files);if($('wallPicker').open){organizing=false;selectedWalls.clear();$('pickerRatio').value='all';renderWallPicker();}};
 $('removeImage').onclick=()=>deleteSelectedWalls(new Set([state.wall]));
 let lastPortrait=portrait(),layoutSettleTimer;
-function settleLayout(){clearTimeout(layoutSettleTimer);layoutSettleTimer=setTimeout(function(){
- if(gesture)finishGesture({pointerId:gesture.id,clientX:gesture.lastX,clientY:gesture.lastY},true);
+function settleLayout(){if(gesture||pinchSuppressed)return;clearTimeout(layoutSettleTimer);layoutSettleTimer=setTimeout(function(){
+ if(gesture||pinchSuppressed)return;
  if(lastPortrait!==portrait()){lastPortrait=portrait();adaptWall();applyWall();}
  positionWall();placeClock();$('size').value=layout().size;$('sizeLabel').textContent=layout().size+'%';
 },160);}
@@ -544,6 +546,7 @@ awake();postIOS('ready');
 </script><script>
 // iPhone controls the physical orientation. No iframe or app rotation.
 function sizeForIPhone(){
+ if(gesture||pinchSuppressed)return;
  if(document.activeElement&&document.activeElement.matches('input,textarea,select'))return;
  const height=window.visualViewport?window.visualViewport.height:innerHeight;
  document.documentElement.style.setProperty('--desk-height',Math.round(height)+'px');
@@ -563,4 +566,9 @@ for(const area of document.querySelectorAll('header,footer,.wall-nav,dialog')){
 }
 </script><script>
 $('wallPositionEdit').onclick=function(){wallpaperPositionEditing=!wallpaperPositionEditing;this.setAttribute('aria-pressed',String(wallpaperPositionEditing));this.textContent=wallpaperPositionEditing?'位置調整を終了':'壁紙位置を調整';toast(wallpaperPositionEditing?'設定を閉じて壁紙をドラッグしてください。明るさ調整に戻すときは位置調整を終了します。':'通常操作に戻りました。');};
+</script><script>
+// iOS touch fallback: keep one-finger gestures inside the stage from scrolling the viewport.
+$('stage').addEventListener('touchmove',function(event){if(event.cancelable)event.preventDefault();},{passive:false});
+$('stage').addEventListener('pointerup',function(){setTimeout(sizeForIPhone,0);});
+$('stage').addEventListener('pointercancel',function(){setTimeout(sizeForIPhone,0);});
 </script></body></html>
