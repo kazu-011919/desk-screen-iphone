@@ -6,10 +6,9 @@ function frameLayout(width,height,mode){
  return {width:rotate?height:width,height:rotate?width:height,rotate:rotate};
 }
 function placeFrame(){
- const viewport=window.visualViewport;
- const width=viewport?viewport.width:innerWidth,height=viewport?viewport.height:innerHeight;
+ const width=document.documentElement.clientWidth||innerWidth,height=document.documentElement.clientHeight||innerHeight;
  const layout=frameLayout(width,height,direction);
- frame.style.width=layout.width+'px';frame.style.height=layout.height+'px';
+ frame.width=layout.width;frame.height=layout.height;frame.style.width=layout.width+'px';frame.style.height=layout.height+'px';
  frame.style.transform=layout.rotate?'translateX('+width+'px) rotate(90deg)':'none';
  requestAnimationFrame(function(){frame.contentWindow.postMessage({type:'DESK_ORIENTATION_STATE',mode:direction},location.origin);});
 }
