@@ -1,5 +1,5 @@
 const PREFIX='desk-screen:'+self.registration.scope+':';
-const CACHE=PREFIX+'10';
+const CACHE=PREFIX+'11';
 const URLS=['index.html','screen.html','manifest.webmanifest','icon-180.png','icon-192.png','icon-512.png'].map(p=>new URL(p,self.registration.scope).href);
 self.addEventListener('install',event=>event.waitUntil((async()=>{
  const cache=await caches.open(CACHE);
